@@ -1,23 +1,60 @@
-import logo from './logo.svg';
+import React, { useState, useReducer } from 'react';
 import './App.css';
+import Game from './Game';
+
+const formReducer = (state, event) => {
+  return {
+    ...state,
+    [event.sz]: event.value
+  }
+}
 
 function App() {
+  const [formData, setFormData] = useReducer(formReducer, {});
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    setSubmitting(true);
+  }
+
+  const handleChange = event => {
+    setFormData({
+      sz: event.target.sz,
+      value: event.target.value,
+    });
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <div className="align-middle p-5">
+        <h2>2 players</h2>
+        <div className="row">
+          <div className="col">
+            <form onSubmit={handleSubmit}>
+              <div className="row">
+                <div className="col">
+                  <input name="sz" onChange={handleChange} className="form-control" type="text" placeholder="Pleas Enter Size" aria-label="default input example"></input>
+                </div>
+                <div className="col">
+                  <button type="submit" className="btn btn-primary">GO</button>
+                </div>
+              </div>
+            </form>
+          </div>
+          {/* <div className="col">
+            <Game boardSize={this.state.size}/>
+          </div> */}
+          {submitting &&
+            <div className="col">
+              {Object.entries(formData).map(([sz, value]) => (
+                // <li key={sz}><strong>{sz}</strong>:{value.toString()}</li>
+                <Game boardSize={value}/>
+              ))}
+            </div>
+          }
+        </div>
+      </div>
     </div>
   );
 }
