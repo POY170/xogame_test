@@ -74,6 +74,7 @@ function Board(props) {
   export default class Game extends Component {
     constructor(props) {
       super(props)
+      // console.log(props.boardSize)
       this.state = {
         history: [
           { squares: Array(props.boardSize * props.boardSize).fill(null) }

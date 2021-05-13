@@ -20,7 +20,6 @@ function App() {
 
   const handleChange = event => {
     setFormData({
-      sz: event.target.sz,
       value: event.target.value,
     });
   }
@@ -49,7 +48,8 @@ function App() {
             <div className="col">
               {Object.entries(formData).map(([sz, value]) => (
                 // <li key={sz}><strong>{sz}</strong>:{value.toString()}</li>
-                <Game boardSize={value}/>
+                <Game boardSize={parseInt(value) < 3? 3: parseInt(value)}/>
+                // console.log(typeof parseInt(value))
               ))}
             </div>
           }
