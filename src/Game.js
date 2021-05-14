@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
+import firebase from './util/firebase'
 
-function Board(props) {
+  function Board(props) {
     const squares = props.squares
     const onSquareClick = props.onSquareClick
     const win = props.win
@@ -28,32 +29,57 @@ function Board(props) {
   function Info(props) {
     const onHistoryClick = props.onHistoryClick
     const step = props.step
+    var executed = false;
     return <div className="info">
       <Status message={ props.status }/>
-      <History history={ props.history } onHistoryClick={ onHistoryClick } step={ step }/>
+      <History message={ props.status } history={ props.history } onHistoryClick={ onHistoryClick } step={ step }/>
      </div>
   }
   
   function Status(props) {
     return <p className="status">{ props.message }</p>
   }
-  
+  var executed = false;
+  var check = 0;
+
+  function createhistoryplay( stepon) {
+      const historyplayRef = firebase.database().ref('HistoryPlay')
+      const historyplay = {
+        stepon
+      }
+      if (stepon == 'Game start') check++
+      if (check <= 1) {
+        historyplayRef.push(historyplay)
+      }
+  }
+
   function History(props) {
-    const onHistoryClick = props.onHistoryClick
+
+    // const onHistoryClick = props.onHistoryClick
     const step = props.step
     const history = props.history
+    const message = props.message
+
     return <ul className="history">{ 
         history.map((item, index) => {
           const value = !index ? 'Game start' : GetMoveInfo(index, history)
-          const highlight = step === index
-          return <HistoryItem highlight={ highlight } onClick={ () => onHistoryClick(index) } value={ value }/>
+          // const highlight = step === index
+          // return <HistoryItem highlight={ highlight } onClick={ () => onHistoryClick(index) } value={ value }/>
+          //return <HistoryItem value={ value }/>
+          const stepon = HistoryItem.call(this,value) 
+
+          if (message.includes("wins"))
+          {
+            createhistoryplay.call(this, stepon)
+          }
         })
      }</ul>
   }
   
   function HistoryItem(props) {
-    const styles = { backgroundColor: props.highlight ? 'yellow' : 'transparent' }
-    return <li className="history__item" style={ styles } onClick={ props.onClick }>{ props.value }</li>
+    // const styles = { backgroundColor: props.highlight ? 'yellow' : 'transparent' }
+    return props
+    // return <li className="history__item" style={ styles } onClick={ props.onClick }>{ props.value }</li>
   }
   
   function GetMoveInfo(index, history) {

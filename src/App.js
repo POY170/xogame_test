@@ -1,6 +1,7 @@
 import React, { useState, useReducer } from 'react';
 import './App.css';
 import Game from './Game';
+import firebase from './util/firebase'
 
 const formReducer = (state, event) => {
   return {
@@ -12,6 +13,47 @@ const formReducer = (state, event) => {
 function App() {
   const [formData, setFormData] = useReducer(formReducer, {});
   const [submitting, setSubmitting] = useState(false);
+  // const [historyplay, setHistoryplay] = useState([]);
+  // const [hist, setHist] = useState(false);
+
+  // const ref = firebase.firestore().collection('HistoryPlay')
+  // console.log(ref)
+
+  // function gethistoryplay() {
+  //   ref.onSnapshot((querySnapshot) => {
+  //     const item = [];
+  //     querySnapshot.forEach((doc) => {
+  //       item.push(doc.data())
+  //     })
+      // setHist(true)
+    //   setHistoryplay(item)
+    // })
+    // console.log(historyplay)
+  // }
+  function addItemToList(stepon) {
+    var ul = document.getElementById('list')
+    var _stepon = document.createElement('li')
+    _stepon.className = "history__item";
+
+    _stepon.innerHTML = stepon
+
+    ul.appendChild(_stepon)
+    
+  }
+
+  function gethistoryplay() {
+    var i = 1
+    firebase.database().ref('HistoryPlay').once('value', function(snapshot){
+      snapshot.forEach(
+        function(ChilSnapShot){
+          let stepon = ChilSnapShot.val().stepon
+          if(stepon == "Game start") 
+            {stepon = 'round '+ i++ + ' ' + stepon}
+          addItemToList(stepon)
+        }
+      )
+    })
+  }
 
   const handleSubmit = event => {
     event.preventDefault();
@@ -53,6 +95,19 @@ function App() {
               ))}
             </div>
           }
+          
+  {/* {window.onload = gethistoryplay} */}
+
+          <div className="col">
+            <button onClick={gethistoryplay} type="submit" className="btn btn-success">replay</button>
+            {/* {hist && */}
+              <ul id="list">
+                {/* {historyplay.map((h) => ( onClick={gethistoryplay()} 
+                  h.stepon
+                ))} */}
+              </ul>
+            {/* } */}
+          </div>
         </div>
       </div>
     </div>
